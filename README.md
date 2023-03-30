@@ -1,13 +1,11 @@
 # Python MySQL Authentication
 
-This project demonstrates authentication in a Python application using MySQL as the backend database. The project uses tkinter for the graphical user interface (GUI) and mysql.connector to connect to the MySQL database. Users can log in using their username, password, and role.
+This project demonstrates authentication in a Python application using MySQL as the backend database. The project uses tkinter for the graphical user interface (GUI) and mysql.connector to connect to the MySQL database. Users can log in using their username, password, and role and view their role specific data.
 
 ## Features
 - MySQL database connection
-- Tkinter-based GUI for user input
+- Tkinter-based GUI for user input and display
 - Authentication based on user credentials and role
-- Customizable interface
-- Simple and efficient code
 
 ## Skills Demonstrated 
 
@@ -28,18 +26,12 @@ Error Handling and Validation: Handling user input errors, providing feedback to
 
 Planned features and improvements currently being worked on:
 
-- Role-based access control: Enhancing the application to display pages and data based on the user's role after successful login. Each role will have specific access rights and be limited to certain information.
+- ~~Role-based access control: Enhancing the application to display pages and data based on the user's role after successful login. Each role will have specific access rights and be limited to certain information.~~ Completed
 
-- Registration functionality: Allowing new users to register with a username, password, and role, which will be stored in the MySQL database.
+- ~~Registration functionality: Allowing new users to register with a username, password, and role, which will be stored in the MySQL database.~~ Completed admin side.
 
 - Data management: Creating role-specific pages where users can view, add, update, and delete data depending on their access rights.
 
-- Improved security: Authenticating roles based on MySQL users rather than checking with Python. Connecting with root currently poses security flaws.
+## Current Demo
 
-## Current Screenshots
-
-![Main Page](/Demo%20Screenshots/loginMain.png)
-
-![Working Login](/Demo%20Screenshots/workingLogin.png)
-
-![Failed Login](/Demo%20Screenshots/failedLogin.png)
+![Demo](/Demo/Demo.gif)
