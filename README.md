@@ -1,6 +1,8 @@
 # Python MySQL Authentication
 
-This project demonstrates authentication in a Python application using MySQL as the backend database. The project uses tkinter for the graphical user interface (GUI) and mysql.connector to connect to the MySQL database. Users can log in using their username, password, and role and view their role specific data.
+Current in progress project for CS350: Information & Knowledge Management course
+
+This project demonstrates authentication in a Python application using MySQL as the backend database. The project uses tkinter for the graphical user interface (GUI) and mysql.connector to connect to the MySQL database. Users can log in using their username and password and view their role specific data.
 
 ## Features
 - MySQL database connection
