@@ -4,7 +4,7 @@ import tkinter.messagebox
 import mysql.connector
 
 # Importing functions from different modules
-from user_access import display_table
+from user_access import display_table, log_user_login
 from employee_access import se_data, hr_data, pr_data, general
 
 # Creating a connection to the database
@@ -81,6 +81,7 @@ class Form(tk.Frame):
         # Checking if the row is not empty
         if row:
             role.set(row[0])
+            log_user_login(username.get())
             # Depending on the role, displaying different data
             if role.get() == 'Admin':
                 display_table(self.parent)

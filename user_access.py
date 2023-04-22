@@ -1,13 +1,26 @@
 # Importing the necessary libraries
 import tkinter as tk
 import mysql.connector
+import datetime
+import os
 
 # Importing functions from different modules
 from employee_access import se_data, pr_data, hr_data, emp_se
 from registration import register_user
 
 
+def log_user_login(username):
+    # Get the current timestamp
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_entry = f"{timestamp} - {username} has logged in\n"
+
+    # Write the log entry to the audit trail file
+    with open("audit_trail.txt", "a") as file:
+        file.write(log_entry)
+
 # Function to display the login credentials table
+
+
 def display_table(self):
 
     mydb = mysql.connector.connect(
@@ -33,7 +46,27 @@ def display_table(self):
             mydb.close()
             refresh()
 
+    def get_all_roles():
+        mycursor.execute("SELECT DISTINCT role FROM login_credential")
+        roles = mycursor.fetchall()
+        return [role[0] for role in roles]
+
+    def change_role(user_id, current_role):
+        pass
+
+    def display_audit_trail():
+        audit_file_path = "audit_trail.txt"
+        try:
+            if os.path.exists(audit_file_path):
+                os.startfile(audit_file_path)
+            else:
+                tk.messagebox.showinfo("Error", "Audit trail file not found.")
+        except Exception as e:
+            tk.messagebox.showinfo(
+                "Error", f"An error occurred while opening the audit trail: {str(e)}")
+
     # Function to refresh the table
+
     def refresh():
         table_window.destroy()
         display_table(self)
@@ -56,7 +89,7 @@ def display_table(self):
     num_cols = len(rows[0])
     table_frame.pack(fill="both", expand=True)
     table_window.update_idletasks()
-    table_window.geometry('{}x{}'.format(num_cols*100, (num_rows+1)*50))
+    table_window.geometry('{}x{}'.format(num_cols*150, (num_rows+1)*75))
 
     # Creating labels for each cell in the table and a button to delete the corresponding row
     for i, row in enumerate(rows):
@@ -66,6 +99,9 @@ def display_table(self):
             delete_button = tk.Button(
                 table_frame, text="Delete", command=lambda row=row: delete_user(row[0]), bg='red')
             delete_button.grid(row=i, column=num_cols, padx=5)
+            change_role_button = tk.Button(
+                table_frame, text="Change Role", command=lambda row=row: change_role(row[0], row[-1]))
+            change_role_button.grid(row=i, column=num_cols + 1, padx=5)
 
     # Create a frame for the button
     button_frame = tk.Frame(table_window)
@@ -92,6 +128,10 @@ def display_table(self):
     button_refresh = tk.Button(
         button_frame, text="Refresh", font="Arial 8 bold", command=refresh, bg='dark slate gray', fg='white')
     button_refresh.pack(pady=(0, 5))
+
+    button_audit = tk.Button(
+        button_frame, text="Audit Trail", font="Arial 8 bold", command=display_audit_trail, bg='dark slate gray', fg='white')
+    button_audit.pack(pady=(0, 5))
 
     # Main loop
     table_window.mainloop()
