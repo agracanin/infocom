@@ -1,5 +1,7 @@
 # Importing the necessary libraries
 import tkinter as tk
+from tkinter import messagebox
+from tkinter import ttk
 import mysql.connector
 import datetime
 import os
@@ -9,10 +11,10 @@ from employee_access import se_data, pr_data, hr_data, emp_se
 from registration import register_user
 
 
-def log_user_login(username):
+def log_action(username, action):
     # Get the current timestamp
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    log_entry = f"{timestamp} - {username} has logged in\n"
+    log_entry = f"{timestamp} - {username} {action}\n"
 
     # Write the log entry to the audit trail file
     with open("audit_trail.txt", "a") as file:
@@ -31,7 +33,7 @@ def display_table(self):
     )
 
     # Function to delete a user from the login credentials table
-    def delete_user(user_id):
+    def delete_user(user_id, username):
         # Confirming the user's decision to delete the user
         confirmed = tk.messagebox.askyesno(
             "Confirm Deletion", "Are you sure you want to delete this user?")
@@ -41,18 +43,58 @@ def display_table(self):
             mycursor = mydb.cursor()
             mycursor.execute(
                 "DELETE FROM login_credential WHERE id = %s", (user_id,))
+            log_action(username, "has been deleted from login_credentials")
             mydb.commit()
             mycursor.close()
             mydb.close()
             refresh()
 
-    def get_all_roles():
-        mycursor.execute("SELECT DISTINCT role FROM login_credential")
-        roles = mycursor.fetchall()
-        return [role[0] for role in roles]
+    def change_role(user_id, username):
+        def submit():
+            selected_role = role_var.get()
+            old_role = current_role.get()
+            if selected_role != old_role:
+                confirm = messagebox.askyesno(
+                    "Confirm", "Are you sure you want to change this role?")
+                if confirm:
+                    try:
+                        mycursor = mydb.cursor()
+                        mycursor.execute(
+                            "UPDATE login_credential SET role = %s WHERE id = %s", (selected_role, user_id))
+                        mydb.commit()
+                        messagebox.showinfo(
+                            "Success", f"Role changed successfully for user {user_id}")
+                        log_action(
+                            username, f"role change from {old_role} to {selected_role}")
+                        change_role_window.destroy()
+                        refresh()
+                    except Exception as e:
+                        messagebox.showinfo(
+                            "Error", f"An error occurred while changing the role: {str(e)}")
 
-    def change_role(user_id, current_role):
-        pass
+        mycursor = mydb.cursor()
+        mycursor.execute(
+            "SELECT role FROM login_credential WHERE id = %s", (user_id,))
+        current_role = tk.StringVar()
+        current_role.set(mycursor.fetchone()[0])
+
+        change_role_window = tk.Toplevel()
+        change_role_window.title("Change Role")
+
+        tk.Label(change_role_window, text="Select a new role:").grid(
+            row=0, column=0, pady=10, padx=10)
+
+        # Add more roles if needed
+        roles = ["SE", "HR", "PR", "General", "Admin"]
+        role_var = tk.StringVar(change_role_window)
+        role_var.set(current_role.get())
+        role_menu = ttk.Combobox(
+            change_role_window, textvariable=role_var, values=roles, state="readonly")
+        role_menu.grid(row=0, column=1, pady=10, padx=10)
+
+        submit_button = tk.Button(
+            change_role_window, text="Submit", command=submit)
+        submit_button.grid(row=1, column=0, columnspan=2, pady=10)
 
     def display_audit_trail():
         audit_file_path = "audit_trail.txt"
@@ -97,10 +139,10 @@ def display_table(self):
             label = tk.Label(table_frame, text=cell, relief=tk.RIDGE)
             label.grid(row=i, column=j, sticky=tk.NSEW)
             delete_button = tk.Button(
-                table_frame, text="Delete", command=lambda row=row: delete_user(row[0]), bg='red')
+                table_frame, text="Delete", command=lambda row=row: delete_user(row[0], row[1]), bg='red3', fg='white')
             delete_button.grid(row=i, column=num_cols, padx=5)
             change_role_button = tk.Button(
-                table_frame, text="Change Role", command=lambda row=row: change_role(row[0], row[-1]))
+                table_frame, text="Change Role", command=lambda row=row: change_role(row[0], row[1]), bg='dark slate gray', fg='white')
             change_role_button.grid(row=i, column=num_cols + 1, padx=5)
 
     # Create a frame for the button

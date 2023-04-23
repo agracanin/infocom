@@ -52,7 +52,8 @@ def register_user():
             val = (username, role, password)
             mycursor.execute(sql, val)
             mydb.commit()
-
+            from user_access import log_action
+            log_action(username, f"user has been created with role {role}")
             # Show a success message and close the registration window
             success_message = tk.Toplevel()
             success_message.title("Success")

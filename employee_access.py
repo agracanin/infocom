@@ -35,7 +35,6 @@ def se_data(parent):
         for j, cell in enumerate(row):
             label = tk.Label(table_window, text=cell, relief=tk.RIDGE)
             label.grid(row=i+1, column=j, sticky=tk.NSEW)
-
     # Adding button to view emp_se table
     emp_se_button = tk.Button(table_window, text="View SE Employees", bg='dark slate gray', fg='white',
                               command=lambda: emp_se(parent))
