@@ -2,10 +2,8 @@
 import tkinter as tk
 import tkinter.messagebox
 import mysql.connector
-
-# Importing functions from different modules
-from user_access import display_table, log_action
-from employee_access import se_data, hr_data, pr_data, general
+# Function import
+from user_data import set_username, set_role
 
 # Creating a connection to the database
 mydb = mysql.connector.connect(
@@ -15,8 +13,9 @@ mydb = mysql.connector.connect(
     database="infocom"
 )
 
+# Creating a class to implement login form or well everything here..
 
-# Creating a class to implement login form
+
 class Form(tk.Frame):
 
     # Initializing form with constructor
@@ -68,19 +67,27 @@ class Form(tk.Frame):
         self.buttonLogin.place(height=45, width=60, x=230, y=25)
 
     # Method to handle the login process
+
     def logs(self):
         mycursor = mydb.cursor()
         # SQL query to fetch the role based on the provided username and password
         sql = "SELECT role FROM login_credential WHERE BINARY username = '%s' AND BINARY password = '%s'" % (
             username.get(), password.get())
-
         # Executing and fetching the first row from the query result
         mycursor.execute(sql)
         row = mycursor.fetchone()
 
         # Checking if the row is not empty
         if row:
+            # Importing functions here to avoid circular import
+            from user_access import display_table
+            from employee_access import se_data, hr_data, pr_data, general
             role.set(row[0])
+            # Setting our user_data.py functions here to access in other files
+            set_username(username.get())
+            set_role(row[0])
+            # Importing our log writing to audit trail and writing the log in
+            from user_access import log_action
             log_action(username.get(), "has logged in")
             # Depending on the role, displaying different data
             if role.get() == 'Admin':

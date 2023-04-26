@@ -10,19 +10,21 @@ import os
 from employee_access import se_data, pr_data, hr_data, emp_se
 from registration import register_user
 
+# Function to write logs to audit_trail.txt
+
 
 def log_action(username, action):
     # Get the current timestamp
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Format for writing to audit trail
     log_entry = f"{timestamp} - {username} {action}\n"
 
     # Write the log entry to the audit trail file
     with open("audit_trail.txt", "a") as file:
         file.write(log_entry)
 
+
 # Function to display the login credentials table
-
-
 def display_table(self):
 
     mydb = mysql.connector.connect(
@@ -34,7 +36,7 @@ def display_table(self):
 
     # Function to delete a user from the login credentials table
     def delete_user(user_id, username):
-        # Confirming the user's decision to delete the user
+        # Confirming the users decision to delete the user
         confirmed = tk.messagebox.askyesno(
             "Confirm Deletion", "Are you sure you want to delete this user?")
 
@@ -49,13 +51,15 @@ def display_table(self):
             mydb.close()
             refresh()
 
+    # Change role function
     def change_role(user_id, username):
         def submit():
             selected_role = role_var.get()
             old_role = current_role.get()
-            if selected_role != old_role:
+            if selected_role != old_role:  # If current role and selected role do not match
                 confirm = messagebox.askyesno(
                     "Confirm", "Are you sure you want to change this role?")
+                # If the user confirms, update the database with the new role
                 if confirm:
                     try:
                         mycursor = mydb.cursor()
@@ -68,10 +72,12 @@ def display_table(self):
                             username, f"role change from {old_role} to {selected_role}")
                         change_role_window.destroy()
                         refresh()
+                    # If there is a error, display to user
                     except Exception as e:
                         messagebox.showinfo(
                             "Error", f"An error occurred while changing the role: {str(e)}")
 
+        # Creating the new window and populating a drop down menu with the roles available. Current role is preselected
         mycursor = mydb.cursor()
         mycursor.execute(
             "SELECT role FROM login_credential WHERE id = %s", (user_id,))
@@ -84,7 +90,7 @@ def display_table(self):
         tk.Label(change_role_window, text="Select a new role:").grid(
             row=0, column=0, pady=10, padx=10)
 
-        # Add more roles if needed
+        # Storing our roles in an array for the dropdown menu
         roles = ["SE", "HR", "PR", "General", "Admin"]
         role_var = tk.StringVar(change_role_window)
         role_var.set(current_role.get())
@@ -96,14 +102,17 @@ def display_table(self):
             change_role_window, text="Submit", command=submit)
         submit_button.grid(row=1, column=0, columnspan=2, pady=10)
 
+    # Function to open the audit_trail.txt
     def display_audit_trail():
         audit_file_path = "audit_trail.txt"
         try:
             if os.path.exists(audit_file_path):
                 os.startfile(audit_file_path)
             else:
+                # Error handling if the file does not exist
                 tk.messagebox.showinfo("Error", "Audit trail file not found.")
         except Exception as e:
+            # Error handling for any other errors
             tk.messagebox.showinfo(
                 "Error", f"An error occurred while opening the audit trail: {str(e)}")
 
@@ -154,7 +163,7 @@ def display_table(self):
         button_frame, text="View SE Data", font="Arial 8 bold", command=lambda: se_data(table_window), bg='dark slate gray', fg='white')
     button_se_data.pack(pady=(5, 5))
 
-    # Creating buttons to view different data and register a new user, and a button to refresh the table
+    # Creating buttons to view different data and register a new user, a button to refresh the table and a button to display audit trail
     button_hr_data = tk.Button(
         button_frame, text="View HR Data", font="Arial 8 bold", command=lambda: hr_data(table_window), bg='dark slate gray', fg='white')
     button_hr_data.pack(pady=(0, 5))

@@ -9,9 +9,8 @@ mydb = mysql.connector.connect(
     database="infocom"
 )
 
+
 # Function to register user (admin)
-
-
 def register_user():
     # Creating a new toplevel window for user registration
     reg_window = tk.Toplevel()
